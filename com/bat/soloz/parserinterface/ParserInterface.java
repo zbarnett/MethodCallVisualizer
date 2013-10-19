@@ -2,15 +2,19 @@ package com.bat.soloz.parserinterface;
 
 // @author Zebulun Barnett
 
+import com.bat.soloz.graph.RecursivityType;
+import com.bat.soloz.graph.MethodNode;
+
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
+
 import java.io.File;
 import java.util.LinkedList;
 
 public class ParserInterface {
 
     public static void main(String[] args) {
-        File sourceFile = new File("test.java");
+        File sourceFile = new File(args[0]);
         LinkedList<MethodNode> nodes = null;
         
         try {

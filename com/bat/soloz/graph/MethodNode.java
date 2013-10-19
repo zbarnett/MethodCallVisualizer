@@ -1,4 +1,4 @@
-package com.bat.soloz.parserinterface;
+package com.bat.soloz.graph;
 
 // @author Zebulun Barnett
 
@@ -11,7 +11,7 @@ public class MethodNode {
     private String bodyText;
     private RecursivityType recursivity;
     
-    MethodNode( final String fullyQualifiedMethodName,
+    public MethodNode( final String fullyQualifiedMethodName,
                 final int linesOfCode,
                 final LinkedList<MethodNode> children,
                 final String bodyText,

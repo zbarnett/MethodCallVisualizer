@@ -1,4 +1,4 @@
-package com.bat.soloz.parserinterface;
+package com.bat.soloz.graph;
 
 /**
  *

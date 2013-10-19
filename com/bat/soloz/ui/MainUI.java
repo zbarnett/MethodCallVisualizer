@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import com.bat.soloz.parserinterface.MethodNode;
+import com.bat.soloz.graph.MethodNode;
 import com.bat.soloz.parserinterface.ParserInterface;
 
 /**
@@ -19,7 +19,7 @@ public class MainUI extends JPanel {
     static JFrame window = null;
     static JPanel mainPanel = null;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -30,7 +30,7 @@ public class MainUI extends JPanel {
                 }
                 window = new JFrame("Java Method Call Visualizer");
 
-                mainPanel = new MainUI();
+                mainPanel = new MainUI(args[0]);
                 window.getContentPane().add(mainPanel);
 
                 window.setResizable(true);
@@ -43,14 +43,14 @@ public class MainUI extends JPanel {
         });
     }
     
-    private MainUI(){
+    private MainUI(String fileName){
         // TODO: add project to github
         
         // setup gui stuff first
         setPreferredSize(new Dimension(800, 600));
         
         // now setup method parser stuff
-        File sourceFile = new File("test.java");
+        File sourceFile = new File(fileName);
         LinkedList<MethodNode> methodNodes = null;
         
         try {

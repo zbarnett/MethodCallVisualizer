@@ -2,8 +2,11 @@ package com.bat.soloz.parserinterface;
 
 // @author Zebulun Barnett
 
+import com.bat.soloz.graph.MethodNode;
+
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
+
 import java.util.LinkedList;
 
 public class MethodVisitor extends VoidVisitorAdapter {
