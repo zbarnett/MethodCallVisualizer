@@ -2,10 +2,10 @@ package com.bat.soloz.graph;
 
 /**
  *
- * @author zebulun
+ * @author Zebulun Barnett
  */
 public enum RecursivityType {
-    Normal,
+    NotRecursive,
     DirectlyRecursive,
     IndirectlyRecursive
 }

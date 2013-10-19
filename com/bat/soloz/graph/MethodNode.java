@@ -1,7 +1,9 @@
 package com.bat.soloz.graph;
 
-// @author Zebulun Barnett
-
+/**
+ *
+ * @author Zebulun Barnett
+ */
 import java.util.LinkedList;
 
 public class MethodNode {

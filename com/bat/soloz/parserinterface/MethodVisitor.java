@@ -1,7 +1,9 @@
 package com.bat.soloz.parserinterface;
 
-// @author Zebulun Barnett
-
+/**
+ *
+ * @author Zebulun Barnett
+ */
 import com.bat.soloz.graph.MethodNode;
 
 import japa.parser.ast.body.MethodDeclaration;

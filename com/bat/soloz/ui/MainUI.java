@@ -44,8 +44,6 @@ public class MainUI extends JPanel {
     }
     
     private MainUI(String fileName){
-        // TODO: add project to github
-        
         // setup gui stuff first
         setPreferredSize(new Dimension(800, 600));
         

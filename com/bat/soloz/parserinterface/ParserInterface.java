@@ -1,7 +1,9 @@
 package com.bat.soloz.parserinterface;
 
-// @author Zebulun Barnett
-
+/**
+ *
+ * @author Zebulun Barnett
+ */
 import com.bat.soloz.graph.RecursivityType;
 import com.bat.soloz.graph.MethodNode;
 
@@ -46,7 +48,7 @@ public class ParserInterface {
         if(node.getChildren() == null)
             return;
         
-        if(!node.getRecursivity().equals(RecursivityType.Normal)) {
+        if(!node.getRecursivity().equals(RecursivityType.NotRecursive)) {
             System.out.println(" : " + node.getRecursivity());
             return;
         }
@@ -87,7 +89,7 @@ public class ParserInterface {
             String bodyText = methodNode.getBodyText();
              
             // we assume method is not recursive at this point
-            methodNode.setRecursivity(RecursivityType.Normal);
+            methodNode.setRecursivity(RecursivityType.NotRecursive);
              
             for(MethodNode otherMethodNode : methodNodes) {
                 if(bodyText.contains(otherMethodNode.getShortName()+"(")){ // TODO: kinda hackish
