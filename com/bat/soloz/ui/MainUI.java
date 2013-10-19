@@ -29,6 +29,7 @@ public class MainUI extends JPanel {
 				} catch (Exception e) {
 				}
 				window = new JFrame("Java Method Call Visualizer");
+				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 				mainPanel = new MainUI(args[0]);
 				window.getContentPane().add(mainPanel);
