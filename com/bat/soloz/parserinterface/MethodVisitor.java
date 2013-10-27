@@ -19,7 +19,7 @@ public class MethodVisitor extends VoidVisitorAdapter {
 		methodNodes = new LinkedList<>();
 	}
 
-	public void visit(MethodDeclaration method, Object arg) {
+	public void visit(final MethodDeclaration method, final Object arg) {
 		// process single method here
 		MethodNode thisNode = new MethodNode(method.getName(), method.getBody().getStmts().size(), null, method.getBody().toString(), null);
 

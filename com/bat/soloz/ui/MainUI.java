@@ -19,8 +19,7 @@ public class MainUI extends JPanel {
 				try {
 					javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 					javax.swing.ToolTipManager.sharedInstance().setDismissDelay(10000); // set tooltip timeout to 10s 
-				} catch (Exception e) {
-				}
+				} catch (Exception e) {}
 				window = new JFrame("Java Method Call Visualizer");
 				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -37,7 +36,7 @@ public class MainUI extends JPanel {
 		});
 	}
 
-	private MainUI(String fileName) {
+	private MainUI(final String fileName) {
 		// setup gui stuff first
 		setPreferredSize(new java.awt.Dimension(800, 600));
 

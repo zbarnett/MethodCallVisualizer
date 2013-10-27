@@ -15,20 +15,20 @@ import java.util.LinkedList;
 
 public class ParserInterface {
 
-	public static void printMethodNodes(LinkedList<MethodNode> methodNodes) {
+	public static void printMethodNodes(final LinkedList<MethodNode> methodNodes) {
 		for (MethodNode methodNode : methodNodes) {
 			System.out.println(methodNode);
 		}
 	}
 
-	public static LinkedList<MethodNode> analyzeSourceFile(File file) throws Exception {
+	public static LinkedList<MethodNode> analyzeSourceFile(final File file) throws Exception {
 		LinkedList<MethodNode> methodDeclarations = extractMethodDeclarations(file);
 		LinkedList<MethodNode> linkedNodes = linkMethodNodes(methodDeclarations);
 
 		return linkedNodes;
 	}
 
-	private static LinkedList<MethodNode> extractMethodDeclarations(File file) throws Exception {
+	private static LinkedList<MethodNode> extractMethodDeclarations(final File file) throws Exception {
 		CompilationUnit compilationUnit = JavaParser.parse(file);
 
 		MethodVisitor methodDeclarationScanner = new MethodVisitor();
