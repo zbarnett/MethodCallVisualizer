@@ -36,8 +36,13 @@ public class GraphView extends JPanel {
 			setBackground(new Color(0, 255, 0, 255));
 			// TODO: lay visual nodes out in an appealing manner
 
+			System.out.println("GraphView width:"+getWidth() + " height:"+getHeight());
+			
 			for(MethodNode methodNode : methodNodes){
 				VisualNode visualNode = new VisualNode(methodNode, this);
+				
+				visualNode.setLocation((int)(Math.random()*getWidth()), (int)(Math.random()*getHeight()));
+				
 				this.add(visualNode);
 				visualNodes.add(visualNode);
 				visNodes.put(methodNode.getLongName(), visualNode);
@@ -59,12 +64,7 @@ public class GraphView extends JPanel {
 				for(MethodNode otherNode : visualNode.getMethodNode().getChildren()){
 					Vector2 from = visualNode.getCallerPlugLoc();
 					Vector2 to = visNodes.get(otherNode.getLongName()).getCalleePlugLoc();
-					
-//					Graphics2D g2 = (Graphics2D) g;
-//					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//					g2.drawLine(from.x, from.y, to.x, to.y);
-//					
-					// TODO: draw splines!
+
 					drawSpline(g, from, to);
 				}
 			}

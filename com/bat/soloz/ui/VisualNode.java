@@ -1,15 +1,16 @@
 package com.bat.soloz.ui;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import com.bat.soloz.graph.MethodNode;
 import com.bat.soloz.graph.Vector2;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 /**
  *
@@ -22,8 +23,6 @@ public class VisualNode extends JPanel {
 	VisualNode(final MethodNode methodNode, final JPanel parent) {
 		this.methodNode = methodNode;
 		this.parent = parent;
-
-		setLocation((int)(Math.random()*200), (int)(Math.random()*200));
 		
 		setSize(new Dimension(50, 50));
 		setPreferredSize(new Dimension(50, 50));
@@ -72,8 +71,6 @@ public class VisualNode extends JPanel {
 			
 			panelStart.x = panel.getX();
 			panelStart.y = panel.getY();
-			
-			System.out.println("coords set");
 		}
 		@Override
 		public void mouseDragged(final MouseEvent e) {

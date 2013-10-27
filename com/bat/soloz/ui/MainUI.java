@@ -1,7 +1,15 @@
 package com.bat.soloz.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 /**
  *
@@ -38,9 +46,36 @@ public class MainUI extends JPanel {
 
 	private MainUI(final String fileName) {
 		// setup gui stuff first
-		setPreferredSize(new java.awt.Dimension(800, 600));
+		setPreferredSize(new Dimension(800, 600));
+		setLayout(new BorderLayout());
 
+		JMenuBar menuBar = new JMenuBar();
+		window.setJMenuBar(menuBar);
+		
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		fileMenu.add(new JMenuItem("New", KeyEvent.VK_N));
+		fileMenu.add(new JMenuItem("Open", KeyEvent.VK_O));
+		fileMenu.add(new JMenuItem("Exit", KeyEvent.VK_X));
+		
+		JMenu editMenu = new JMenu("Edit");
+		menuBar.add(editMenu);
+		editMenu.add(new JMenuItem("Re-analyze", KeyEvent.VK_R));
+		
+		JMenu helpMenu = new JMenu("Help");
+		menuBar.add(helpMenu);
+		helpMenu.add(new JMenuItem("About", KeyEvent.VK_A));
+		
 		GraphView view1 = new GraphView(new java.io.File(fileName));
-		add(view1);
+		JScrollPane scroller = new JScrollPane(view1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroller.updateUI();
+		
+		GraphView view2 = new GraphView(new java.io.File(fileName));
+		JScrollPane scroller2 = new JScrollPane(view2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Tab 1", null, scroller, null); // tabname, icon, panel, mouseover
+		tabbedPane.addTab("Tab 2", null, scroller2, null);
+		add(tabbedPane);
 	}
 }
