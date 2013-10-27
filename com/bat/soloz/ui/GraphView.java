@@ -5,6 +5,7 @@ import com.bat.soloz.graph.Vector2;
 import com.bat.soloz.parserinterface.ParserInterface;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Line2D;
@@ -47,7 +48,7 @@ public class GraphView extends JPanel {
 	}
 	
 	@Override
-	public void paintComponent(java.awt.Graphics g){ // TODO: use clipping region to speed up rendering
+	public void paintComponent(Graphics g){ // TODO: use clipping region to speed up rendering
 		super.paintComponent(g); // so that the entire screen is refreshed
 		
 		g.setColor(Color.BLACK);
@@ -59,12 +60,45 @@ public class GraphView extends JPanel {
 					Vector2 from = visualNode.getCallerPlugLoc();
 					Vector2 to = visNodes.get(otherNode.getLongName()).getCalleePlugLoc();
 					
-					Graphics2D g2 = (Graphics2D) g;
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					g2.drawLine(from.x, from.y, to.x, to.y);
-					
+//					Graphics2D g2 = (Graphics2D) g;
+//					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//					g2.drawLine(from.x, from.y, to.x, to.y);
+//					
 					// TODO: draw splines!
+					drawSpline(g, from, to);
 				}
 			}
+	}
+	
+	public void drawSpline(final Graphics g, final Vector2 from, final Vector2 to){
+		final double MINCURVE = 35;
+		
+		double x0 = from.x;
+		double y0 = from.y;
+		
+		double x1 = from.x;
+		double y1 = Math.max((from.y + to.y)/2 - from.y, MINCURVE) + from.y;
+		double x2 = to.x;
+		double y2 = to.y - Math.max((from.y + to.y)/2 - from.y, MINCURVE);
+		
+		double x3 = to.x;
+		double y3 = to.y;
+		
+		
+		double A = x3 - 3*x2 + 3*x1 - x0;
+		double B = 3*x2 - 6*x1 + 3*x0;
+		double C = 3*x1 - 3*x0;
+		double D = x0;
+		
+		double E = y3 - 3*y2 + 3*y1 - y0;
+		double F = 3*y2 - 6*y1 + 3*y0;
+		double G = 3*y1 - 3*y0;
+		double H = y0;
+		
+		for(double t = 0.0; t <= 1.0; t += 0.001){ // TODO: find largest value to increment t by
+			int x = (int)((((A*t) + B)*t + C)*t + D);
+			int y = (int)((((E*t) + F)*t + G)*t + H);
+			g.drawRect(x, y, 1, 1); // TODO: this is very slow
+		}
 	}
 }
