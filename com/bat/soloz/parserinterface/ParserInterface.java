@@ -14,13 +14,6 @@ import java.io.File;
 import java.util.LinkedList;
 
 public class ParserInterface {
-
-	public static void printMethodNodes(final LinkedList<MethodNode> methodNodes) {
-		for (MethodNode methodNode : methodNodes) {
-			System.out.println(methodNode);
-		}
-	}
-
 	public static LinkedList<MethodNode> analyzeSourceFile(final File file) throws Exception {
 		LinkedList<MethodNode> methodDeclarations = extractMethodDeclarations(file);
 		LinkedList<MethodNode> linkedNodes = linkMethodNodes(methodDeclarations);

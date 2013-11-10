@@ -10,6 +10,7 @@ public class MethodNode {
 
 	private String fullyQualifiedMethodName;
 	private int linesOfCode;
+	private int numberOfCalls;
 	private LinkedList<MethodNode> children;
 	private String bodyText;
 	private RecursivityType recursivity;

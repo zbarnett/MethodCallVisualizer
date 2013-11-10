@@ -3,15 +3,13 @@ package com.bat.soloz.ui;
 import com.bat.soloz.graph.MethodNode;
 import com.bat.soloz.graph.Vector2;
 import com.bat.soloz.parserinterface.ParserInterface;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.Line2D;
 import java.util.HashMap;
-
 import java.util.LinkedList;
+
 import javax.swing.JPanel;
 
 /**
@@ -19,33 +17,28 @@ import javax.swing.JPanel;
  * @author zebulun
  */
 public class GraphView extends JPanel {
-	LinkedList<VisualNode> visualNodes;
-	HashMap<String, VisualNode> visNodes;
+	HashMap<String, VisualNode> visualNodes;
+	// TODO: store edges here too so they can be drawn quickly by simple iteration
 	
 	GraphView(final java.io.File sourceFile){
 		setLayout(null);
 		try {
-			LinkedList<MethodNode> methodNodes = ParserInterface.analyzeSourceFile(sourceFile);
-			
-			visualNodes = new LinkedList<>();
-			visNodes = new HashMap<>();
+			visualNodes = new HashMap<>();
 		
 			Dimension size = new Dimension(400, 400);
 			setPreferredSize(size);
 			setSize(size);
 			setBackground(new Color(0, 255, 0, 255));
-			// TODO: lay visual nodes out in an appealing manner
-
-			System.out.println("GraphView width:"+getWidth() + " height:"+getHeight());
 			
+			LinkedList<MethodNode> methodNodes = ParserInterface.analyzeSourceFile(sourceFile);
 			for(MethodNode methodNode : methodNodes){
 				VisualNode visualNode = new VisualNode(methodNode, this);
 				
+				// TODO: lay visual nodes out in an appealing manner
 				visualNode.setLocation((int)(Math.random()*getWidth()), (int)(Math.random()*getHeight()));
 				
 				this.add(visualNode);
-				visualNodes.add(visualNode);
-				visNodes.put(methodNode.getLongName(), visualNode);
+				visualNodes.put(methodNode.getLongName(), visualNode);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -58,12 +51,13 @@ public class GraphView extends JPanel {
 		
 		g.setColor(Color.BLACK);
 		
-		if(visNodes != null && visNodes.size() > 0)
-			for(VisualNode visualNode : visNodes.values()){
+		// TODO: use list of edges so they can be drawn quickly by simple iteration
+		if(visualNodes != null && visualNodes.size() > 0)
+			for(VisualNode visualNode : visualNodes.values()){
 				if(visualNode.getMethodNode().getChildren() != null)
 				for(MethodNode otherNode : visualNode.getMethodNode().getChildren()){
 					Vector2 from = visualNode.getCallerPlugLoc();
-					Vector2 to = visNodes.get(otherNode.getLongName()).getCalleePlugLoc();
+					Vector2 to = visualNodes.get(otherNode.getLongName()).getCalleePlugLoc();
 
 					drawSpline(g, from, to);
 				}
