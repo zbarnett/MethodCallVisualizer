@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import com.bat.soloz.graph.MethodNode;
 import com.bat.soloz.graph.Vector2;
+import java.awt.FlowLayout;
 
 /**
  *
@@ -24,9 +25,10 @@ public class VisualNode extends JPanel {
 		this.methodNode = methodNode;
 		this.parent = parent;
 		
-		setSize(new Dimension(50, 50));
-		setPreferredSize(new Dimension(50, 50));
-		add(new JLabel(methodNode.getShortName()));
+		JLabel label = new JLabel(methodNode.getLongName());
+		((FlowLayout)getLayout()).setVgap(0); // to fix the margin/padding
+		setSize(new Dimension(((int)label.getPreferredSize().getWidth())+5, ((int)label.getPreferredSize().getHeight())+5));
+		add(label);
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		MagicMouseMover mouseListener = new MagicMouseMover(this);
@@ -77,7 +79,10 @@ public class VisualNode extends JPanel {
 			int deltaX = e.getXOnScreen() - mouseStart.x;
 			int deltaY = e.getYOnScreen() - mouseStart.y;
 			
-			panel.setLocation(panelStart.x + deltaX, panelStart.y + deltaY);
+			int newX = (panelStart.x + deltaX < 0)? 0 : panelStart.x + deltaX;
+			int newY = (panelStart.y + deltaY < 0)? 0 : panelStart.y + deltaY;
+			
+			panel.setLocation(newX, newY);
 			parent.repaint();
 		}
 		@Override

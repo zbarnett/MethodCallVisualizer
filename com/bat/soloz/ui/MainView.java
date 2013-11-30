@@ -2,9 +2,8 @@ package com.bat.soloz.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.LinkedList;
+import java.io.File;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 /**
@@ -12,22 +11,26 @@ import javax.swing.JTabbedPane;
  * @author zebulun
  */
 public class MainView extends JPanel {
-	
-	private LinkedList<GraphView> views;
+	private JTabbedPane tabbedPane;
 
-	MainView(final String fileName) {
-		views = new LinkedList<>();
-		
+	MainView() {
 		setPreferredSize(new Dimension(800, 600));
 		setLayout(new BorderLayout());
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		add(tabbedPane);
+	}
+	
+	public void reanalyze(){
+		GraphView view = (GraphView)tabbedPane.getSelectedComponent();
+		view.reanalyze();
+	}
+	
+	public void addTab(File file){
+		GraphView view = new GraphView(file);
+		tabbedPane.addTab(view.getName(), null, view, null); // tabname, icon, panel, mouseover
 		
-		GraphView view = new GraphView(new java.io.File(fileName));
-		views.add(view);
-		JScrollPane scroller = new JScrollPane(view, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroller.updateUI();
-		tabbedPane.addTab("Tab "+views.size(), null, scroller, null); // tabname, icon, panel, mouseover
+		// make newest tab the active tab
+		tabbedPane.setSelectedComponent(view);
 	}
 }

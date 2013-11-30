@@ -15,6 +15,10 @@ public class MethodNode {
 	private String bodyText;
 	private RecursivityType recursivity;
 
+	public MethodNode(final String fullyQualifiedMethodName, final int linesOfCode, final String bodyText) {
+		this(fullyQualifiedMethodName, linesOfCode, new LinkedList<MethodNode>(), bodyText,	RecursivityType.NotRecursive);
+	}
+	
 	public MethodNode(final String fullyQualifiedMethodName,
 			final int linesOfCode,
 			final LinkedList<MethodNode> children,
@@ -25,14 +29,20 @@ public class MethodNode {
 		this.children = children;
 		this.bodyText = bodyText;
 		this.recursivity = recursivity;
+		
+		numberOfCalls = 0;
 	}
 
 	public void setChildren(final LinkedList<MethodNode> children) {
 		this.children = children; // TODO: should they overwrite the old children or be added?
 	}
 
-	public void setRecursivity(RecursivityType recursivity) {
+	public void setRecursivity(final RecursivityType recursivity) {
 		this.recursivity = recursivity;
+	}
+	
+	public void incrementCallCount() {
+		numberOfCalls++;
 	}
 
 	public RecursivityType getRecursivity() {
@@ -42,8 +52,12 @@ public class MethodNode {
 	public LinkedList<MethodNode> getChildren() {
 		return children;
 	}
+	
+	public int getNumberOfCalls() {
+		return numberOfCalls;
+	}
 
-	public void addChild(MethodNode child) {
+	public void addChild(final MethodNode child) {
 		if (children == null) {
 			children = new LinkedList<>();
 		}
@@ -63,12 +77,13 @@ public class MethodNode {
 		}
 	}
 
+	@Override
 	public String toString() {
-		String summary = getShortName();
+		String summary = getLongName();
 
 		if (children != null && children.size() > 0) {
 			for (MethodNode child : children) {
-				summary += "\n\t" + child.getShortName();
+				summary += "\n\t" + child.getLongName();
 			}
 		}
 

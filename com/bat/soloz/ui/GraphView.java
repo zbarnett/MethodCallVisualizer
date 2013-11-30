@@ -3,65 +3,122 @@ package com.bat.soloz.ui;
 import com.bat.soloz.graph.MethodNode;
 import com.bat.soloz.graph.Vector2;
 import com.bat.soloz.parserinterface.ParserInterface;
+import japa.parser.ParseException;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
  * @author zebulun
  */
-public class GraphView extends JPanel {
+public class GraphView extends JScrollPane {
+	private GraphPanel graphPanel;
+	private String name;
+	private File file;
 	HashMap<String, VisualNode> visualNodes;
 	// TODO: store edges here too so they can be drawn quickly by simple iteration
 	
-	GraphView(final java.io.File sourceFile){
-		setLayout(null);
-		try {
-			visualNodes = new HashMap<>();
+	GraphView(final File file){
+		super(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		graphPanel = new GraphPanel();
+		setViewportView(graphPanel);
 		
-			Dimension size = new Dimension(400, 400);
-			setPreferredSize(size);
-			setSize(size);
-			setBackground(new Color(0, 255, 0, 255));
-			
-			LinkedList<MethodNode> methodNodes = ParserInterface.analyzeSourceFile(sourceFile);
-			for(MethodNode methodNode : methodNodes){
-				VisualNode visualNode = new VisualNode(methodNode, this);
-				
-				// TODO: lay visual nodes out in an appealing manner
-				visualNode.setLocation((int)(Math.random()*getWidth()), (int)(Math.random()*getHeight()));
-				
-				this.add(visualNode);
-				visualNodes.put(methodNode.getLongName(), visualNode);
-			}
+		this.file = file;
+		name = file.getName();
+		visualNodes = new HashMap<>();
+		
+		try {
+			analyze();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void paintComponent(Graphics g){ // TODO: use clipping region to speed up rendering
-		super.paintComponent(g); // so that the entire screen is refreshed
+	public String getName(){
+		return name;
+	}
+	
+	public Rectangle getBoundingBox(){
+		Rectangle box = new Rectangle();
 		
-		g.setColor(Color.BLACK);
+		box.x = Integer.MAX_VALUE;
+		box.y = Integer.MAX_VALUE;
+		box.width = 0;
+		box.height = 0;
 		
-		// TODO: use list of edges so they can be drawn quickly by simple iteration
-		if(visualNodes != null && visualNodes.size() > 0)
-			for(VisualNode visualNode : visualNodes.values()){
-				if(visualNode.getMethodNode().getChildren() != null)
-				for(MethodNode otherNode : visualNode.getMethodNode().getChildren()){
-					Vector2 from = visualNode.getCallerPlugLoc();
-					Vector2 to = visualNodes.get(otherNode.getLongName()).getCalleePlugLoc();
+		int x2 = 0;
+		int y2 = 0;
+		
+		for(VisualNode node : visualNodes.values()){
+			if(node.getX() < box.x)
+				box.x = node.getX();
+			if(node.getY() < box.y)
+				box.y = node.getY();
+			if(node.getX()+node.getWidth() > x2)
+				x2 = node.getX() + node.getWidth();
+			if(node.getY()+node.getHeight() > y2)
+				y2 = node.getY() + node.getHeight();
+		}
+		
+		box.width = x2 - box.x;
+		box.height = y2 - box.y;
+		
+		return box;
+	}
+	
+	private void updateViewport(Rectangle box){
+		Dimension newSize = new Dimension(box.width, box.height);
+		//graphPanel.setSize(newSize);
+		graphPanel.setPreferredSize(newSize);
+		graphPanel.scrollRectToVisible(box);
+		graphPanel.revalidate();
+		graphPanel.repaint();
+	}
+	
+	private void analyze() {
+		graphPanel.removeAll();
+		visualNodes.clear();
+		
+		try{
+			LinkedList<MethodNode> methodNodes = ParserInterface.analyzeSourceCode(file);
 
-					drawSpline(g, from, to);
-				}
+			for(MethodNode methodNode : methodNodes){
+				VisualNode visualNode = new VisualNode(methodNode, graphPanel);
+
+				// TODO: lay visual nodes out in an appealing manner
+				visualNode.setLocation((int)(Math.random()*graphPanel.getWidth()), (int)(Math.random()*graphPanel.getHeight()));
+
+				graphPanel.add(visualNode);
+				visualNodes.put(methodNode.getLongName(), visualNode);
 			}
+		} catch(ParseException prse){
+			JOptionPane.showMessageDialog(null, "Error occurred while parsing file " + prse.getMessage(), "Parse Error", JOptionPane.ERROR_MESSAGE);
+			prse.printStackTrace();
+		} catch(IOException ioe){
+			JOptionPane.showMessageDialog(null, "Error occurred while reading file " + ioe.getMessage(), "File Read Error", JOptionPane.ERROR_MESSAGE);
+			ioe.printStackTrace();
+		}
+		
+	}
+	
+	public void reanalyze(){
+		try{
+			analyze();
+			repaint();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void drawSpline(final Graphics g, final Vector2 from, final Vector2 to){
@@ -93,6 +150,46 @@ public class GraphView extends JPanel {
 			int x = (int)((((A*t) + B)*t + C)*t + D);
 			int y = (int)((((E*t) + F)*t + G)*t + H);
 			g.drawRect(x, y, 1, 1); // TODO: this is very slow
+		}
+	}
+	
+	private class GraphPanel extends JPanel{
+		GraphPanel(){
+			setLayout(null);
+			setSize(new Dimension(400, 400));
+			setPreferredSize(new Dimension(400, 400));
+			setBackground(new Color(0, 255, 0, 255));
+			revalidate();
+			repaint();
+		}
+		
+		@Override
+		public void paintComponent(Graphics g){ // TODO: use clipping region to speed up rendering
+			super.paintComponent(g); // so that the entire screen is refreshed
+
+			g.setColor(Color.BLACK);
+
+			Rectangle box = getBoundingBox();
+			updateViewport(box);
+			g.drawRect(box.x, box.y, box.width, box.height);
+
+			// TODO: use list of edges so they can be drawn quickly by simple iteration
+			if(visualNodes != null && visualNodes.size() > 0){
+				for(VisualNode visualNode : visualNodes.values()){
+					if(visualNode.getMethodNode().getChildren() != null){
+						for(MethodNode otherNode : visualNode.getMethodNode().getChildren()){
+							// we don't want to draw a line to itself
+							if(visualNode.getMethodNode() == otherNode)
+								continue;
+							
+							Vector2 from = visualNode.getCallerPlugLoc();
+							Vector2 to = visualNodes.get(otherNode.getLongName()).getCalleePlugLoc();
+
+							drawSpline(g, from, to);
+						}
+					}
+				}
+			}
 		}
 	}
 }
