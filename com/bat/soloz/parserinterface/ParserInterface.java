@@ -22,11 +22,7 @@ public class ParserInterface {
 		HashMap<String, CompilationUnit> compilationUnits = getCompilationUnits(file, new HashMap<String, CompilationUnit>());
 		
 		LinkedList<MethodNode> methodDeclarations = extractMethodDeclarations(compilationUnits);
-		
-		for(MethodNode node : methodDeclarations)
-			System.out.println(node);
-		
-		LinkedList<MethodCall> methodCalls = extractMethodCalls(compilationUnits);
+		LinkedList<MyMethodCall> methodCalls = extractMethodCalls(compilationUnits, methodDeclarations);
 		LinkedList<MethodNode> linkedNodes = linkMethodNodes(methodDeclarations, methodCalls);
 
 		return linkedNodes;
@@ -36,7 +32,7 @@ public class ParserInterface {
 		if(file.isFile()){
 			CompilationUnit cu = JavaParser.parse(file);
 			cu.setData(removeExtension(file.getName())); // because there's no other way to know which freaking file this is
-			printTree(cu, "");
+			//printTree(cu, "");
 					
 			compilationUnits.put(getCompilationUnitName(cu), cu);
 		}else{
@@ -62,7 +58,7 @@ public class ParserInterface {
 	private static final char EXTENSION_SEPARATOR = '.';
 	private static final char DIRECTORY_SEPARATOR = '/';
 
-	public static String removeExtension(String filename) {
+	private static String removeExtension(String filename) {
 		if (filename == null) {
 			return null;
 		}
@@ -76,7 +72,7 @@ public class ParserInterface {
 		}
 	}
 
-	public static int indexOfExtension(String filename) {
+	private static int indexOfExtension(String filename) {
 
 		if (filename == null) {
 			return -1;
@@ -116,13 +112,13 @@ public class ParserInterface {
 		return methodNodes;
 	}
 	
-	private static LinkedList<MethodCall> extractMethodCalls(final HashMap<String, CompilationUnit> compilationUnits) throws ParseException, IOException {
-		LinkedList<MethodCall> methodCalls = new LinkedList<>();
+	private static LinkedList<MyMethodCall> extractMethodCalls(final HashMap<String, CompilationUnit> compilationUnits, final LinkedList<MethodNode> methodNodes) throws ParseException, IOException {
+		LinkedList<MyMethodCall> methodCalls = new LinkedList<>();
 		
 		for(CompilationUnit cu : compilationUnits.values()){
 			LinkedList<MyClassDeclaration> scope = MyClassDeclaration.getClassDeclarations(cu);
 		
-			MethodCallVisitor methodCallScanner = new MethodCallVisitor(compilationUnits);
+			MethodCallVisitor methodCallScanner = new MethodCallVisitor(methodNodes);
 			methodCallScanner.visit(cu, scope);
 			
 			methodCalls.addAll(methodCallScanner.getMethodCalls());
@@ -132,7 +128,7 @@ public class ParserInterface {
 	}
 
 	// totally not robust or anything.
-	private static LinkedList<MethodNode> linkMethodNodes(final LinkedList<MethodNode> methodNodes, final LinkedList<MethodCall> methodCalls) {
+	private static LinkedList<MethodNode> linkMethodNodes(final LinkedList<MethodNode> methodNodes, final LinkedList<MyMethodCall> methodCalls) {
 		for (MethodNode methodNode : methodNodes) {
 			String bodyText = methodNode.getBodyText();
 

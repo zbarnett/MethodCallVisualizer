@@ -25,7 +25,7 @@ public class VisualNode extends JPanel {
 		this.methodNode = methodNode;
 		this.parent = parent;
 		
-		JLabel label = new JLabel(methodNode.getLongName());
+		JLabel label = new JLabel(methodNode.getSignature());
 		((FlowLayout)getLayout()).setVgap(0); // to fix the margin/padding
 		setSize(new Dimension(((int)label.getPreferredSize().getWidth())+5, ((int)label.getPreferredSize().getHeight())+5));
 		add(label);

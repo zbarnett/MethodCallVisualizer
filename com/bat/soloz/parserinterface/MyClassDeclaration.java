@@ -11,21 +11,23 @@ import java.util.LinkedList;
  * @author Zebulun Barnett
  */
 public class MyClassDeclaration {
-	String packageName;
-	String className;
-	ClassOrInterfaceType parentClass;
-	LinkedList<ImportDeclaration> importsReversed;
+	private String packageName;
+	private String className;
+	private ClassOrInterfaceType parentClass;
+	private LinkedList<ImportDeclaration> importsReversed;
+	private ClassOrInterfaceDeclaration classDeclaration;
 	
-	MyClassDeclaration(final ClassOrInterfaceDeclaration classDef){
-		packageName = getPackageName(classDef);
-		className = classDef.getName();
-		parentClass = getParentClass(classDef);
-		importsReversed = getImports(classDef);
+	MyClassDeclaration(final ClassOrInterfaceDeclaration classDeclaration){
+		this.classDeclaration = classDeclaration;
+		packageName = getPackageName(classDeclaration);
+		className = classDeclaration.getName();
+		parentClass = getParentClass(classDeclaration);
+		importsReversed = getImports(classDeclaration);
 		
 		fullyQualifyParentClass();
 	}
 	
-	public static LinkedList<MyClassDeclaration> getClassDeclarations(final CompilationUnit cu) {
+	static LinkedList<MyClassDeclaration> getClassDeclarations(final CompilationUnit cu) {
 		LinkedList<MyClassDeclaration> classDecs = new LinkedList<>();
 		
 		for(Node node : cu.getChildrenNodes()){
@@ -35,7 +37,8 @@ public class MyClassDeclaration {
 		return classDecs;
 	}
 	
-	private void fullyQualifyParentClass(){ //  doesn't work for classes that don't have an import
+	//  doesn't work for classes that don't have an import or starred imports
+	private void fullyQualifyParentClass(){
 		if(importsReversed == null || importsReversed.isEmpty())
 			return;
 		for(ImportDeclaration idec : importsReversed){
@@ -98,6 +101,10 @@ public class MyClassDeclaration {
 		}
 		
 		return reverse;
+	}
+	
+	ClassOrInterfaceDeclaration getClassDeclaration() {
+		return classDeclaration;
 	}
 	
 	@Override

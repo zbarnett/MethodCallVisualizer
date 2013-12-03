@@ -3,8 +3,11 @@ package com.bat.soloz.parserinterface;
 import com.bat.soloz.graph.MethodNode;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
+import japa.parser.ast.body.ConstructorDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.Parameter;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -12,11 +15,11 @@ import java.util.LinkedList;
  * @author Zebulun Barnett
  */
 class ClassVisitor extends VoidVisitorAdapter {
-	LinkedList<MyClassDeclaration> classDecs;
+	HashMap<ClassOrInterfaceDeclaration, MyClassDeclaration> classDecs;
 	LinkedList<MethodNode> methodNodes;
 	
 	ClassVisitor() {
-		classDecs = new LinkedList<>();
+		classDecs = new HashMap<>();
 		methodNodes = new LinkedList<>();
 	}
 	
@@ -26,23 +29,37 @@ class ClassVisitor extends VoidVisitorAdapter {
 			MyClassDeclaration classDec = new MyClassDeclaration(classDeclaration);
 		
 			// add a declaration for the current class
-			classDecs.add(classDec);
+			classDecs.put(classDeclaration, classDec);
 			
-			// find all methods of the current class and add them
+			// find all methods and constructors of the current class and add them
 			for(Node node : classDeclaration.getChildrenNodes()){
-				if(node instanceof MethodDeclaration){ // TODO: add ConstructorDeclaration(s)?
+				if(node instanceof MethodDeclaration){
 					MethodDeclaration methodDec = (MethodDeclaration)node;
-					String methodName = classDec.packageName + "." + classDec.className + "." + methodDec.getName();
-					int lines = (methodDec.getBody().getStmts() == null)? 0 : methodDec.getBody().getStmts().size(); // check for null
+					String methodName = classDec.toString() + "." + methodDec.getName();
+					LinkedList<String> parameterList = new LinkedList<>();
+					if(methodDec.getParameters() != null && methodDec.getParameters().size() > 0)
+						for(Parameter param : methodDec.getParameters())
+							parameterList.add(param.getType().toString());
+					int lines = (methodDec.getBody().getStmts() == null)? 0 : methodDec.getBody().getStmts().size();
 					String bodyText = methodDec.getBody().toString();
-					methodNodes.add(new MethodNode(methodName, lines, bodyText));
+					methodNodes.add(new MethodNode(methodName, parameterList, lines, bodyText));
+				} else if(node instanceof ConstructorDeclaration) {
+					ConstructorDeclaration constDec = (ConstructorDeclaration)node;
+					String constName = classDec.toString() + "." + constDec.getName();
+					LinkedList<String> parameterList = new LinkedList<>();
+					if(constDec.getParameters() != null && constDec.getParameters().size() > 0)
+						for(Parameter param : constDec.getParameters())
+							parameterList.add(param.getType().toString());
+					int lines = (constDec.getBlock().getStmts() == null)? 0 : constDec.getBlock().getStmts().size();
+					String bodyText = constDec.getBlock().toString();
+					methodNodes.add(new MethodNode(constName, parameterList, lines, bodyText));
 				}
 			}
 		}
 		super.visit(classDeclaration, arg);
 	}
 	
-	LinkedList<MyClassDeclaration> getClassDeclarations() {
+	HashMap<ClassOrInterfaceDeclaration, MyClassDeclaration> getClassDeclarations() {
 		return classDecs;
 	}
 	

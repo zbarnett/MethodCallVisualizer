@@ -55,15 +55,20 @@ public class Starter {
 				JMenu fileMenu = new JMenu("File");
 				menuBar.add(fileMenu);
 				
-				JMenuItem openFileMenuItem = new JMenuItem("Open File", KeyEvent.VK_O);
-				openFileMenuItem.setActionCommand("Open File");
+				JMenuItem openFileMenuItem = new JMenuItem("Analyze File", KeyEvent.VK_O);
+				openFileMenuItem.setActionCommand("Analyze File");
 				openFileMenuItem.addActionListener(menuListener);
 				fileMenu.add(openFileMenuItem);
 				
-				JMenuItem openDirectoryMenuItem = new JMenuItem("Open Directory", KeyEvent.VK_O);
-				openDirectoryMenuItem.setActionCommand("Open Directory");
+				JMenuItem openDirectoryMenuItem = new JMenuItem("Analyze Directory", KeyEvent.VK_O);
+				openDirectoryMenuItem.setActionCommand("Analyze Directory");
 				openDirectoryMenuItem.addActionListener(menuListener);
 				fileMenu.add(openDirectoryMenuItem);
+				
+				JMenuItem closeTabMenuItem = new JMenuItem("Close Tab", KeyEvent.VK_C);
+				closeTabMenuItem.setActionCommand("Close Tab");
+				closeTabMenuItem.addActionListener(menuListener);
+				fileMenu.add(closeTabMenuItem);
 				
 				JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
 				exitMenuItem.setActionCommand("Exit");
@@ -103,8 +108,9 @@ public class Starter {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			switch(event.getActionCommand()){
-				case "Open File" : openFile(); break;
-				case "Open Directory" : openDirectory(); break;
+				case "Analyze File" : analyzeFile(); break;
+				case "Analyze Directory" : analyzeDirectory(); break;
+				case "Close Tab" : closeTab(); break;
 				case "Exit" : exit(); break;
 				case "Re-analyze" : reanalyze(); break;
 				case "About" : about(); break;
@@ -112,7 +118,7 @@ public class Starter {
 			}
 		}
 		
-		private void openFile(){
+		private void analyzeFile(){
 			openDialog.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			
 			int returnVal = openDialog.showOpenDialog(null);
@@ -120,12 +126,16 @@ public class Starter {
 				mainView.addTab(openDialog.getSelectedFile());
 		}
 		
-		private void openDirectory(){
+		private void analyzeDirectory(){
 			openDialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			
 			int returnVal = openDialog.showOpenDialog(null);
 			if(returnVal == JFileChooser.APPROVE_OPTION)
 				mainView.addTab(openDialog.getSelectedFile());
+		}
+		
+		private void closeTab() {
+			mainView.closeActiveTab();
 		}
 		
 		private void exit(){
@@ -137,7 +147,10 @@ public class Starter {
 		}
 		
 		private void about(){
-			JOptionPane.showMessageDialog(mainView, "Made by Zebulun Barnett at Lamar University", "About", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(mainView, "This program is designed to provide a graphical overview\n"+
+					"of the method call structure of a Java program.\n\n"+
+					"Any questions or comments can be sent to\n\n"+
+					"Zebulun Barnett\nspacephlite@gmail.com", "About", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 }

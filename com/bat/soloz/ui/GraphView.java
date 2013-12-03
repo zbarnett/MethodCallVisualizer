@@ -71,8 +71,8 @@ public class GraphView extends JScrollPane {
 				y2 = node.getY() + node.getHeight();
 		}
 		
-		box.width = x2 - box.x;
-		box.height = y2 - box.y;
+		box.width = x2 - box.x - 1; // minus one cause it looked bad
+		box.height = y2 - box.y - 1;
 		
 		return box;
 	}
@@ -171,7 +171,9 @@ public class GraphView extends JScrollPane {
 
 			Rectangle box = getBoundingBox();
 			updateViewport(box);
-			g.drawRect(box.x, box.y, box.width, box.height);
+			
+			// draw bounding box for debug purposes
+			//g.drawRect(box.x, box.y, box.width, box.height);
 
 			// TODO: use list of edges so they can be drawn quickly by simple iteration
 			if(visualNodes != null && visualNodes.size() > 0){

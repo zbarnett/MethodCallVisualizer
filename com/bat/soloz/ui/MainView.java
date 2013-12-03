@@ -33,4 +33,8 @@ public class MainView extends JPanel {
 		// make newest tab the active tab
 		tabbedPane.setSelectedComponent(view);
 	}
+	
+	public void closeActiveTab() {
+		tabbedPane.remove(tabbedPane.getSelectedComponent());
+	}
 }
